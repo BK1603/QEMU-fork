@@ -958,6 +958,11 @@ static void virtio_snd_handle_tx (VirtIODevice *vdev, VirtQueue *vq)
     }
 }
 
+static void virtio_snd_handle_event (VirtIODevice *vdev, VirtQueue *vq)
+{
+    virtio_snd_log("event queue callback called\n");
+}
+
 /*
  * Initializes the VirtIOSound card device. Validates the configuration
  * passed by the command line. Initializes the virtqueues. Allocates resources
@@ -1001,6 +1006,7 @@ static void virtio_snd_device_realize(DeviceState *dev, Error **errp)
     default_params.rate = VIRTIO_SND_PCM_RATE_44100;
 
     s->ctrl_vq = virtio_add_queue(vdev, 64, virtio_snd_handle_ctrl);
+    s->event_vq = virtio_add_queue(vdev, 64, virtio_snd_handle_event);
     s->tx_vq = virtio_add_queue(vdev, 64, virtio_snd_handle_tx);
 
     s->streams = (virtio_snd_pcm_stream **)g_malloc0(sizeof(virtio_snd_pcm_stream) * s->snd_conf.streams);
